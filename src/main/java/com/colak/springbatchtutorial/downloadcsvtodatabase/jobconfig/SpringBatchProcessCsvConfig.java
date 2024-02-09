@@ -1,9 +1,8 @@
-package com.colak.springbatchtutorial.csvtodatabase.jobconfig;
+package com.colak.springbatchtutorial.downloadcsvtodatabase.jobconfig;
 
-import com.colak.springbatchtutorial.csvtodatabase.model.PersonCsv;
-import com.colak.springbatchtutorial.csvtodatabase.model.PersonDb;
+import com.colak.springbatchtutorial.downloadcsvtodatabase.model.PersonCsv;
+import com.colak.springbatchtutorial.downloadcsvtodatabase.model.PersonDb;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
@@ -24,7 +23,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @RequiredArgsConstructor
-@Slf4j
 @Configuration
 public class SpringBatchProcessCsvConfig {
 
@@ -35,21 +33,21 @@ public class SpringBatchProcessCsvConfig {
 
     @Bean
     public Step loadCsvToDatabaseStep(
-            ItemReader<PersonCsv> reader,
-            ItemProcessor<PersonCsv, PersonDb> processor,
-            ItemWriter<PersonDb> writer
+            ItemReader<PersonCsv> personCSvReader,
+            ItemProcessor<PersonCsv, PersonDb> personProcessor,
+            ItemWriter<PersonDb> personDbWriter
     ) {
         return new StepBuilder("loadCsvToDatabaseStep", jobRepository)
                 .<PersonCsv, PersonDb>chunk(10, transactionManager)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
+                .reader(personCSvReader)
+                .processor(personProcessor)
+                .writer(personDbWriter)
                 .build();
     }
 
     @Bean
     @StepScope
-    public FlatFileItemReader<PersonCsv> reader(
+    protected FlatFileItemReader<PersonCsv> personCSvReader(
             @Value("${targetFilePath}") FileSystemResource fileSystemResource
     ) {
         return new FlatFileItemReaderBuilder<PersonCsv>()
@@ -63,7 +61,7 @@ public class SpringBatchProcessCsvConfig {
     }
 
     @Bean
-    public ItemProcessor<PersonCsv, PersonDb> processor() {
+    protected ItemProcessor<PersonCsv, PersonDb> personProcessor() {
         return personCsv -> {
             if (personCsv.title().contains("Professor")) {
                 return null;
@@ -72,8 +70,9 @@ public class SpringBatchProcessCsvConfig {
         };
     }
 
+    // Show how to use Jdbc with Spring Batch
     @Bean
-    public JdbcBatchItemWriter<PersonDb> writer() {
+    protected JdbcBatchItemWriter<PersonDb> personDbWriter() {
         return new JdbcBatchItemWriterBuilder<PersonDb>()
                 .sql("INSERT INTO people (first_name, last_name) VALUES (:firstName, :lastName)")
                 .dataSource(dataSource)

@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.csvtodatabase.jobconfig;
+package com.colak.springbatchtutorial.downloadcsvtodatabase.jobconfig;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,18 +41,9 @@ public class SpringBatchDownloadCsvConfig {
                 .build();
     }
 
-//    @Bean
-//    @StepScope
-//    public Tasklet downloadCsvFileTasklet(
-//            @Value("#{jobParameters['sourceFileUrl']}") String sourceFileUrl,
-//            @Value("#{jobParameters['targetFilePath']}") String targetFilePath
-//    ) throws MalformedURLException, URISyntaxException {
-//        return new DownloadCsvFileTasklet(new URI(sourceFileUrl).toURL(), Paths.get(targetFilePath));
-//    }
-
     @Bean
     @StepScope
-    public Tasklet downloadCsvFileTasklet(
+    protected Tasklet downloadCsvFileTasklet(
             @Value("${sourceFileUrl}") String sourceFileUrl,
             @Value("${targetFilePath}") String targetFilePath
     ) throws MalformedURLException, URISyntaxException {

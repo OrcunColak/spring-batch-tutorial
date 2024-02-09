@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.csvtodatabase.model;
+package com.colak.springbatchtutorial.downloadcsvtodatabase.model;
 
 public record PersonCsv(
         String person_ID,

@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.csvtodatabase.jobconfig;
+package com.colak.springbatchtutorial.downloadcsvtodatabase.jobconfig;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -17,7 +16,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class SpringBatchJobConfig {
 
     private final JobRepository jobRepository;
-    private final PlatformTransactionManager transactionManager;
 
     @Bean
     public Job downloadCsvFileJob(Step downloadCsvFileStep, Step loadCsvToDatabaseStep) {

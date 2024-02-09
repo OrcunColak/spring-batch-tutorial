@@ -1,14 +1,16 @@
-# 1. CSV to Database Job
+# 1. Download CSV Write to Database Job
 
 Original idea is from  
 https://medium.com/@rostyslav.ivankiv/introduction-to-spring-batch-a2f39454573f
 
-Thıs project creates a Job with two steps
+# 2. Read CSV Write to Database Job
 
-1. Download CSV files from the given URL
-2. Load to DB step . Insert the CSV to DB. Each new Job run add CSV with incrementing primary keys
+The original idea is from
+https://medium.com/@berkinyardimci98/data-processing-with-spring-batch-5-b10de6f23262
 
-# Run
+# spring.batch.job.name
+
+We can start a job from command line using spring.batch.job.name parameter
 
 ```
 ./mvnw spring-boot:run \
