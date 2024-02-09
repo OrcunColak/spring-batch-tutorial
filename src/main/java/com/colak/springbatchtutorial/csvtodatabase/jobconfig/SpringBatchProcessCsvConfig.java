@@ -1,7 +1,7 @@
-package com.colak.springbatchtutorial.config;
+package com.colak.springbatchtutorial.csvtodatabase.jobconfig;
 
-import com.colak.springbatchtutorial.model.PersonCsv;
-import com.colak.springbatchtutorial.model.PersonDb;
+import com.colak.springbatchtutorial.csvtodatabase.model.PersonCsv;
+import com.colak.springbatchtutorial.csvtodatabase.model.PersonDb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Step;

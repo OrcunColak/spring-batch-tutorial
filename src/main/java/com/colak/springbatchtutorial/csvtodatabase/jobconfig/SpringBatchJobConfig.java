@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.config;
+package com.colak.springbatchtutorial.csvtodatabase.jobconfig;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
