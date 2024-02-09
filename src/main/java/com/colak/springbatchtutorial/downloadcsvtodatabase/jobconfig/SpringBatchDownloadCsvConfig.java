@@ -41,6 +41,12 @@ public class SpringBatchDownloadCsvConfig {
                 .build();
     }
 
+    // See https://levelup.gitconnected.com/spring-batch-5-examples-tasklet-and-chunk-processing-ba4860618171
+    // The difference between a Tasklet vs. Chunk processing, is that in Tasklet-based processing a Tasklet executes
+    // a block of code within the same transaction context, until it returns RepatStatus.FINISHED.
+    //
+    // In Chunk-based processing we usually process data in chunks, and each chunk executes within its own transaction context,
+    // which allows to keep processing even if a transaction encounters an error.
     @Bean
     @StepScope
     protected Tasklet downloadCsvFileTasklet(
@@ -53,19 +59,19 @@ public class SpringBatchDownloadCsvConfig {
     private record DownloadCsvFileTasklet(URL url, Path path) implements Tasklet {
 
         @Override
-            public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-                downloadCsvFile(url, path);
-                return RepeatStatus.FINISHED;
-            }
+        public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+            downloadCsvFile(url, path);
+            return RepeatStatus.FINISHED;
+        }
 
-            private static void downloadCsvFile(final URL url, final Path path) {
-                try (InputStream in = url.openStream()) {
-                    Files.createDirectories(path.getParent());
-                    Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
-                    log.info("File '{}' has been downloaded from '{}'", path, url);
-                } catch (IOException e) {
-                    log.error("Failed to get csv file", e);
-                }
+        private static void downloadCsvFile(final URL url, final Path path) {
+            try (InputStream in = url.openStream()) {
+                Files.createDirectories(path.getParent());
+                Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+                log.info("File '{}' has been downloaded from '{}'", path, url);
+            } catch (IOException e) {
+                log.error("Failed to get csv file", e);
             }
         }
+    }
 }

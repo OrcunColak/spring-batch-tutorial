@@ -24,7 +24,8 @@ import java.math.BigDecimal;
 
 @Configuration
 @Slf4j
-public class SpringBatchReadCsvConfig {
+public class SpringBatchRefundJobConfig {
+
 
     @Bean
     public Job refundJob(JobRepository jobRepository, Step readCsvToDatabaseStep) {
