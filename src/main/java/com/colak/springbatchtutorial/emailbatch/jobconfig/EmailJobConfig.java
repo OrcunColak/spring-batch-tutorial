@@ -34,7 +34,7 @@ import java.sql.SQLException;
 
 @Configuration
 @Slf4j
-public class SpringBatchEmailJobConfig {
+public class EmailJobConfig {
 
     // Define a job that reads emails from a table and writes to a file
     @Bean

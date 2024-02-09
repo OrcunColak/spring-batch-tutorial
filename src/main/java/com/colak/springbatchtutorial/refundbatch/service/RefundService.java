@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.readcsvtodatabase.service;
+package com.colak.springbatchtutorial.refundbatch.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;

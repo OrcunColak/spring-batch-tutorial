@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.readcsvtodatabase.jpa;
+package com.colak.springbatchtutorial.refundbatch.jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

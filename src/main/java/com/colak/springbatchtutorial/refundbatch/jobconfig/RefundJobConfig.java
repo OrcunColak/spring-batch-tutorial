@@ -1,9 +1,12 @@
-package com.colak.springbatchtutorial.readcsvtodatabase.jobconfig;
+package com.colak.springbatchtutorial.refundbatch.jobconfig;
 
-import com.colak.springbatchtutorial.readcsvtodatabase.jpa.CustomerEntity;
-import com.colak.springbatchtutorial.readcsvtodatabase.repository.CustomerRepository;
+import com.colak.springbatchtutorial.refundbatch.jpa.CustomerEntity;
+import com.colak.springbatchtutorial.refundbatch.repository.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -24,15 +27,27 @@ import java.math.BigDecimal;
 
 @Configuration
 @Slf4j
-public class SpringBatchRefundJobConfig {
+public class RefundJobConfig {
 
 
+    // Define a job that reads a csv file and writes to database
     @Bean
     public Job refundJob(JobRepository jobRepository, Step readCsvToDatabaseStep) {
         return new JobBuilder("customers-import", jobRepository)
                 .listener(new JobCompletionNotificationListener())
                 .start(readCsvToDatabaseStep)
                 .build();
+    }
+
+    private static class JobCompletionNotificationListener implements JobExecutionListener {
+        @Override
+        public void afterJob(JobExecution jobExecution) {
+            if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
+                log.info("JOB FINISHED SUCCESSFULLY!");
+            } else {
+                log.info("JOB ERROR!");
+            }
+        }
     }
 
     @Bean

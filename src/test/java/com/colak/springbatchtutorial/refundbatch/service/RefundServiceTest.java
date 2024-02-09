@@ -1,4 +1,4 @@
-package com.colak.springbatchtutorial.readcsvtodatabase.service;
+package com.colak.springbatchtutorial.refundbatch.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobExecutionException;

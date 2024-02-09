@@ -1,6 +1,6 @@
-package com.colak.springbatchtutorial.readcsvtodatabase.scheduledtask;
+package com.colak.springbatchtutorial.refundbatch.scheduledtask;
 
-import com.colak.springbatchtutorial.readcsvtodatabase.service.RefundService;
+import com.colak.springbatchtutorial.refundbatch.service.RefundService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.scheduling.annotation.Scheduled;
