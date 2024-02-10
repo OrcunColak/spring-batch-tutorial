@@ -50,6 +50,7 @@ public class SpringBatchProcessCsvConfig {
     protected FlatFileItemReader<PersonCsv> personCSvReader(
             @Value("${targetFilePath}") FileSystemResource fileSystemResource
     ) {
+        // We can create a FlatFileItemReader directly too
         return new FlatFileItemReaderBuilder<PersonCsv>()
                 .name("personItemReader")
                 .resource(fileSystemResource)

@@ -1,6 +1,9 @@
 package com.colak.springbatchtutorial.refundbatch.jobconfig;
 
+import com.colak.springbatchtutorial.refundbatch.dto.CustomerDto;
+import com.colak.springbatchtutorial.refundbatch.dto.CustomerRecord;
 import com.colak.springbatchtutorial.refundbatch.jpa.CustomerEntity;
+import com.colak.springbatchtutorial.refundbatch.mapper.CustomerMapper;
 import com.colak.springbatchtutorial.refundbatch.repository.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.BatchStatus;
@@ -18,7 +21,9 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,13 +61,13 @@ public class RefundJobConfig {
     protected Step readCsvToDatabaseStep(
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
-            FlatFileItemReader<CustomerEntity> customerReader,
-            ItemProcessor<CustomerEntity, CustomerEntity> customerProcessor,
+            FlatFileItemReader<CustomerDto> customerReader,
+            ItemProcessor<CustomerDto, CustomerEntity> customerProcessor,
             RepositoryItemWriter<CustomerEntity> customerWriter
     ) {
         return new StepBuilder("processCustomerDataStep", jobRepository)
                 // The expression chunk(10) specifies that 10 elements are read, processed and then written in each processing step.
-                .<CustomerEntity, CustomerEntity>chunk(10, transactionManager)
+                .<CustomerDto, CustomerEntity>chunk(10, transactionManager)
                 .reader(customerReader)
                 .processor(customerProcessor)
                 .writer(customerWriter)
@@ -72,14 +77,15 @@ public class RefundJobConfig {
 
     @Bean
     @StepScope
-    protected FlatFileItemReader<CustomerEntity> customerReader(
+    protected FlatFileItemReader<CustomerDto> customerReader(
             @Value("#{jobParameters['inputFilePath']}") String inputFilePath) {
         if (inputFilePath == null) {
             inputFilePath = "src/main/resources/customer.csv";
         }
         FileSystemResource fileSystemResource = new FileSystemResource(inputFilePath);
 
-        FlatFileItemReader<CustomerEntity> itemReader = new FlatFileItemReader<>();
+        // We can use FlatFileItemReaderBuilder too to create a FlatFileItemReader
+        FlatFileItemReader<CustomerDto> itemReader = new FlatFileItemReader<>();
         itemReader.setResource(fileSystemResource);
         itemReader.setName("csv-reader");
         itemReader.setLinesToSkip(1);
@@ -87,19 +93,35 @@ public class RefundJobConfig {
         return itemReader;
     }
 
-    private LineMapper<CustomerEntity> lineMapper() {
+    private LineMapper<CustomerDto> lineMapper() {
         // Create lineMapper
-        DefaultLineMapper<CustomerEntity> lineMapper = new DefaultLineMapper<>();
+        DefaultLineMapper<CustomerDto> lineMapper = new DefaultLineMapper<>();
         lineMapper.setLineTokenizer(getDelimitedLineTokenizer());
         lineMapper.setFieldSetMapper(getFieldSetMapper());
+
+        // This is just an example that shows how to use FieldSetMapper with a record
+        // lineMapper.setFieldSetMapper(new CustomerRecordFieldSetMapper());
 
         return lineMapper;
     }
 
+    public class CustomerRecordFieldSetMapper implements FieldSetMapper<CustomerRecord> {
+
+        @Override
+        public CustomerRecord mapFieldSet(FieldSet fieldSet) {
+            return CustomerRecord.builder()
+                    .id(fieldSet.readLong("id"))
+                    .firstName(fieldSet.readString("firstName"))
+                    .lastName(fieldSet.readString("lastName"))
+                    .balance(fieldSet.readBigDecimal("balance"))
+                    .build();
+        }
+    }
+
     // Create BeanWrapperFieldSetMapper. This converts a FieldSet object to Java object
-    private BeanWrapperFieldSetMapper<CustomerEntity> getFieldSetMapper() {
-        BeanWrapperFieldSetMapper<CustomerEntity> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(CustomerEntity.class);
+    private BeanWrapperFieldSetMapper<CustomerDto> getFieldSetMapper() {
+        BeanWrapperFieldSetMapper<CustomerDto> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        fieldSetMapper.setTargetType(CustomerDto.class);
         return fieldSetMapper;
     }
 
@@ -115,8 +137,11 @@ public class RefundJobConfig {
     }
 
     @Bean
-    protected ItemProcessor<CustomerEntity, CustomerEntity> customerProcessor(CustomerRepository customerRepository) {
-        return customerEntity -> {
+    protected ItemProcessor<CustomerDto, CustomerEntity> customerProcessor(CustomerRepository customerRepository,
+                                                                           CustomerMapper customerMapper) {
+        return customerDto -> {
+            CustomerEntity customerEntity = customerMapper.toCustomer(customerDto);
+
             Long customerId = customerEntity.getId();
             BigDecimal refundAmount = customerEntity.getBalance();
 
@@ -128,7 +153,8 @@ public class RefundJobConfig {
             } else {
                 log.info("User not found customerId: {}", customerId);
             }
-            return existingCustomer;
+            return customerEntity;
+
         };
     }
 
@@ -137,6 +163,7 @@ public class RefundJobConfig {
     protected RepositoryItemWriter<CustomerEntity> customerWriter(CustomerRepository customerRepository) {
         RepositoryItemWriter<CustomerEntity> writer = new RepositoryItemWriter<>();
         writer.setRepository(customerRepository);
+        // This call is not necessary
         // writer.setMethodName("save");
         return writer;
     }
