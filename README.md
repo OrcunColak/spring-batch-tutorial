@@ -23,6 +23,11 @@ https://satyacodes.medium.com/spring-boot-batch-guide-example-with-csv-to-databa
 The original idea is from
 https://medium.com/@sabri.bouhaddi/spring-batch-5-a-simple-use-case-with-tests-a5e40c654948
 
+# Monitoring a Directory
+
+The original idea is from
+https://medium.com/@sabri.bouhaddi/spring-batch-5-a-simple-use-case-with-tests-a5e40c654948
+
 # spring.batch.job.name
 
 We can start a job from command line using spring.batch.job.name parameter
