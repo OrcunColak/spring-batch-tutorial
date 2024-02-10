@@ -29,7 +29,7 @@ public class RefundScheduledTask {
 
     // Run every day of the week at 00:00.
     //@Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(fixedRate = 2, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     public void performScheduledRefunds() {
         Path watchPath = Paths.get("D:/Work");
 
@@ -37,11 +37,10 @@ public class RefundScheduledTask {
             WatchService watchService = FileSystems.getDefault().newWatchService();
             watchPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
-            WatchKey key;
-            // This method will block until events occur.
-            while ((key = watchService.take()) != null) {
+            // blocks for timeout units of time
+            WatchKey key = watchService.poll(2, TimeUnit.SECONDS);
+            if (key != null) {
                 for (WatchEvent<?> event : key.pollEvents()) {
-
                     log.info("Event kind: {}. File affected:{}.", event.kind(), event.context());
                     if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
                         Path filePath = watchPath.resolve((Path) event.context());
