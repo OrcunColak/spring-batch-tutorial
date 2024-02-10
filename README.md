@@ -18,6 +18,11 @@ https://levelup.gitconnected.com/spring-batch-5-examples-tasklet-and-chunk-proce
 The original idea is from
 https://satyacodes.medium.com/spring-boot-batch-guide-example-with-csv-to-database-fe6e29d364cd
 
+# Integration Test
+
+The original idea is from
+https://medium.com/@sabri.bouhaddi/spring-batch-5-a-simple-use-case-with-tests-a5e40c654948
+
 # spring.batch.job.name
 
 We can start a job from command line using spring.batch.job.name parameter

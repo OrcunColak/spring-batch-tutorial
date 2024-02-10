@@ -24,7 +24,7 @@ public class RefundService {
 
     public BatchStatus performRefunds() throws JobExecutionException {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("timestamp", System.currentTimeMillis())
                 .toJobParameters();
         JobExecution jobExecution = jobLauncher.run(refundJob, jobParameters);
         return jobExecution.getStatus();
