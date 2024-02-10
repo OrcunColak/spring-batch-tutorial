@@ -8,6 +8,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -18,6 +19,7 @@ import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -69,9 +71,16 @@ public class RefundJobConfig {
     }
 
     @Bean
-    protected FlatFileItemReader<CustomerEntity> customerReader() {
+    @StepScope
+    protected FlatFileItemReader<CustomerEntity> customerReader(
+            @Value("#{jobParameters['inputFilePath']}") String inputFilePath) {
+        if (inputFilePath == null) {
+            inputFilePath = "src/main/resources/customer.csv";
+        }
+        FileSystemResource fileSystemResource = new FileSystemResource(inputFilePath);
+
         FlatFileItemReader<CustomerEntity> itemReader = new FlatFileItemReader<>();
-        itemReader.setResource(new FileSystemResource("src/main/resources/customer.csv"));
+        itemReader.setResource(fileSystemResource);
         itemReader.setName("csv-reader");
         itemReader.setLinesToSkip(1);
         itemReader.setLineMapper(lineMapper());
@@ -128,7 +137,7 @@ public class RefundJobConfig {
     protected RepositoryItemWriter<CustomerEntity> customerWriter(CustomerRepository customerRepository) {
         RepositoryItemWriter<CustomerEntity> writer = new RepositoryItemWriter<>();
         writer.setRepository(customerRepository);
-        writer.setMethodName("save");
+        // writer.setMethodName("save");
         return writer;
     }
 }
