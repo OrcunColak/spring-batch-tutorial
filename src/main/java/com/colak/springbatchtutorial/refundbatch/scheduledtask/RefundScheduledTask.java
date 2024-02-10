@@ -32,6 +32,9 @@ public class RefundScheduledTask {
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     public void performScheduledRefunds() {
         Path watchPath = Paths.get("D:/Work");
+        if (!watchPath.toFile().exists()) {
+            return;
+        }
 
         try {
             WatchService watchService = FileSystems.getDefault().newWatchService();

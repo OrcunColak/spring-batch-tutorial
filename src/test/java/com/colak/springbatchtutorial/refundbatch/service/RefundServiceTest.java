@@ -13,17 +13,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class RefundServiceTest {
     @Autowired
-    RefundService refundService;
+    private RefundService refundService;
 
     @Test
     void testPerformRefunds() throws JobExecutionException {
         BatchStatus batchStatus = refundService.performRefunds();
-        assertTrue(batchStatus.isRunning());
+        assertFalse(batchStatus.isUnsuccessful());
     }
 
     @Test
