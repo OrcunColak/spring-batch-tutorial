@@ -91,6 +91,7 @@ public class EmailJobConfig {
 
     }
 
+    // JdbcCursorItemReader and JdbcPagingItemReader are two alternatives
     @Bean
     public JdbcCursorItemReader<EmailMessage> emailMessageJdbcCursorItemReader(DataSource dataSource) {
         return new JdbcCursorItemReaderBuilder<EmailMessage>()
