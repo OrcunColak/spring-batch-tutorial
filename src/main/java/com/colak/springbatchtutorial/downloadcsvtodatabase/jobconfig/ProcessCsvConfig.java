@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 
 @RequiredArgsConstructor
 @Configuration
-public class SpringBatchProcessCsvConfig {
+public class ProcessCsvConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;

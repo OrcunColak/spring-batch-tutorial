@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 @Slf4j
 @Configuration
-public class SpringBatchJobConfig {
+public class DownloadCSVToDatabaseJobConfig {
 
     private final JobRepository jobRepository;
 

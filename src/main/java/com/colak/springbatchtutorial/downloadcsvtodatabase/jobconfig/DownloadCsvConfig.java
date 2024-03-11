@@ -29,7 +29,7 @@ import java.nio.file.StandardCopyOption;
 @RequiredArgsConstructor
 @Slf4j
 @Configuration
-public class SpringBatchDownloadCsvConfig {
+public class DownloadCsvConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
